@@ -1,6 +1,5 @@
 import React from "react";
 import Image from "next/image";
-import { Label } from "@radix-ui/react-label";
 
 interface EmptyPage {
   label: string;

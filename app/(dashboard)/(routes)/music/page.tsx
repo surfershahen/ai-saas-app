@@ -15,9 +15,13 @@ import { Empty } from "@/components/empty";
 import { Loader } from "@/components/loader";
 
 import { formSchema } from "./constants";
+import { useProModal } from "@/hooks/use-pro-modal";
+import toast from "react-hot-toast";
 
 const MusicPage = () => {
+  const proModal = useProModal();
   const router = useRouter();
+
   const [music, setMusic] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -36,7 +40,12 @@ const MusicPage = () => {
       form.reset();
     } catch (error: any) {
       // TODO open Pro model
-      console.log(error);
+
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast.error("Something went wrong");
+      }
     } finally {
       router.refresh();
     }

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Montserrat } from "next/font/google";
@@ -15,6 +14,8 @@ import {
   Settings,
   VideoIcon,
 } from "lucide-react";
+
+import { FreeCounter } from "@/components/free-counter";
 
 const montserrat = Montserrat({
   weight: "600",
@@ -61,11 +62,16 @@ const routes = [
   {
     label: "Settings",
     icon: Settings,
-    href: "/setting",
+    href: "/settings",
   },
 ];
 
-const Sidebar = () => {
+interface SidebarProps {
+  apiLimitCount: number;
+  isPro: boolean;
+}
+
+const Sidebar = ({ apiLimitCount = 0, isPro = false }: SidebarProps) => {
   const pathName = usePathname();
   return (
     <div className="space-y-4 py-4 flex flex-col h-full bg-[#111827] text-white">
@@ -98,6 +104,11 @@ const Sidebar = () => {
           ))}
         </div>
       </div>
+
+      {/* we are fetching this information inside server component called layout.tsx we  we calling awaiting apiLimitCount thats the only thing is doing is calling Prisma  
+      how thhis refresh after generation when we submit we call the API request and hen we assign the data inside a try block after this we have a finally block thats doing router.refresh() is used to reset all server components fetching the newest data from the database  after refresh 
+      */}
+      <FreeCounter isPro={isPro} apiLimitCount={apiLimitCount} />
     </div>
   );
 };

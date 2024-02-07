@@ -14,8 +14,11 @@ import { useRouter } from "next/navigation";
 import { Empty } from "@/components/empty";
 
 import { Loader } from "@/components/loader";
+import { useProModal } from "@/hooks/use-pro-modal";
+import toast from "react-hot-toast";
 
 const VideoPage = () => {
+  const proModal = useProModal();
   const router = useRouter();
   const [video, setVideo] = useState<string>();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -26,6 +29,8 @@ const VideoPage = () => {
   });
 
   const isLoading = form.formState.isSubmitting;
+
+  //func to handle the submit thats reurn a response from chatgpt
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setVideo(undefined);
@@ -35,7 +40,11 @@ const VideoPage = () => {
       form.reset();
     } catch (error: any) {
       // TODO open Pro model
-      console.log(error);
+      if (error?.response?.status === 403) {
+        proModal.onOpen();
+      } else {
+        toast.error("Something went wrong");
+      }
     } finally {
       router.refresh();
     }
