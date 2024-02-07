@@ -84,7 +84,10 @@ const ImagePage = () => {
                   <FormItem className="col-span-12 lg:col-span-6">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus:visible:ring-transparent"
+                        className={cn(
+                          "p-4",
+                          "border-0  outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                        )}
                         disabled={isLoading}
                         placeholder="A Picture of a horse in Swiss alps "
                         {...field}

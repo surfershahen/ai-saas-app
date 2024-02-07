@@ -1,29 +1,30 @@
 "use client";
-import React, { useState } from "react";
 import * as z from "zod";
 import axios from "axios";
-import { Heading } from "@/components/heading";
 import { Code } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { formSchema } from "./constants";
+import { useState } from "react";
+
+import ReactMarkdown from "react-markdown";
+import { useRouter } from "next/navigation";
+import { ChatCompletionUserMessageParam } from "openai/resources/chat/completions";
+import { BotAvatar } from "@/components/bot-avatar";
+import { Heading } from "@/components/heading";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { Empty } from "@/components/empty";
-import ReactMarkdown from "react-markdown";
-import { ChatCompletionUserMessageParam } from "openai/resources/chat/completions";
-import { Loader } from "@/components/loader";
 import { cn } from "@/lib/utils";
+import { Loader } from "@/components/loader";
 import { UserAvatar } from "@/components/user-avatar";
-import { BotAvatar } from "@/components/bot-avatar";
+import { Empty } from "@/components/empty";
 import { useProModal } from "@/hooks/use-pro-modal";
-import toast from "react-hot-toast";
 
+import { formSchema } from "./constants";
+import toast from "react-hot-toast";
 const CodePage = () => {
-  const proModal = useProModal();
   const router = useRouter();
+  const proModal = useProModal();
   const [messages, setMessages] = useState<ChatCompletionUserMessageParam[]>(
     []
   );
@@ -63,7 +64,7 @@ const CodePage = () => {
     <div>
       <Heading
         title="Code Generation"
-        description="Generating Code using descriptive text."
+        description="Generate code using descriptive text."
         icon={Code}
         iconColor="text-green-700"
         bgColor="bg-green-700/10"
@@ -72,9 +73,19 @@ const CodePage = () => {
         <div>
           <Form {...form}>
             <form
-              className="rounded-lg border w-full p-4 px-3 md:px-6 focus-within:shadow-sm grid grid-cols-12 gap-2
-            "
               onSubmit={form.handleSubmit(onSubmit)}
+              className="
+                rounded-lg 
+                border 
+                w-full 
+                p-4 
+                px-3 
+                md:px-6 
+                focus-within:shadow-sm
+                grid
+                grid-cols-12
+                gap-2
+              "
             >
               <FormField
                 name="prompt"
@@ -82,9 +93,12 @@ const CodePage = () => {
                   <FormItem className="col-span-12 lg:col-span-10">
                     <FormControl className="m-0 p-0">
                       <Input
-                        className="border-0 outline-none focus-visible:ring-0 focus:visible:ring-transparent"
+                        className={cn(
+                          "p-4",
+                          "border-0  outline-none focus-visible:ring-0 focus-visible:ring-transparent"
+                        )}
                         disabled={isLoading}
-                        placeholder="Simple toggle button using react hooks"
+                        placeholder="Simple toggle button using react hooks."
                         {...field}
                       />
                     </FormControl>
@@ -92,8 +106,10 @@ const CodePage = () => {
                 )}
               />
               <Button
-                className="col-span-12 lg:col-span-2 w-full "
+                className="col-span-12 lg:col-span-2 w-full"
+                type="submit"
                 disabled={isLoading}
+                size="icon"
               >
                 Generate
               </Button>
@@ -102,14 +118,12 @@ const CodePage = () => {
         </div>
         <div className="space-y-4 mt-4">
           {isLoading && (
-            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted ">
+            <div className="p-8 rounded-lg w-full flex items-center justify-center bg-muted">
               <Loader />
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <div>
-              <Empty label="No Conversation Started " />
-            </div>
+            <Empty label="No conversation started." />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map(message => (
@@ -134,7 +148,7 @@ const CodePage = () => {
                       <code className="bg-black/10 rounded-lg p-1" {...props} />
                     ),
                   }}
-                  className="textsm overflow-hidden leading-7"
+                  className="text-sm overflow-hidden leading-7"
                 >
                   {message.content || ""}
                 </ReactMarkdown>

@@ -2,7 +2,7 @@ import { auth } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { increaseApiLimit, checkApiLimit } from "@/lib/api-limit";
+import { incrementApiLimit, checkApiLimit } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
 const OpenAi = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -30,16 +30,18 @@ export async function POST(req: Request) {
     }
     const freeTrail = await checkApiLimit();
     const isPro = await checkSubscription();
-    if (!freeTrail) {
-      return new NextResponse("free trail has expired.", { status: 403 });
+    if (!freeTrail && !isPro) {
+      return new NextResponse(
+        "Free trial has expired. Please upgrade to pro.",
+        { status: 403 }
+      );
     }
-
     const response = await OpenAi.chat.completions.create({
       model: "gpt-4",
       messages: [instructionMessage, ...messages],
     });
     if (!isPro) {
-      await increaseApiLimit();
+      await incrementApiLimit();
     }
 
     return NextResponse.json(response.choices[0].message);
