@@ -52,7 +52,7 @@ export async function POST(req: Request) {
 
     await prismadb.userSubscription.update({
       where: {
-        stripeSubscriptionId: subscription.id,
+        userId: subscription.id,
       },
       data: {
         stripePriceId: subscription.items.data[0].price.id,
