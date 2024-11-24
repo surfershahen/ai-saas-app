@@ -4,8 +4,9 @@ import prismadb from "@/lib/prismadb";
 import { MAX_FREE_COUNTS } from "@/constants";
 
 export const incrementApiLimit = async () => {
+  //! get the current user ID from Clerk authentication
   const { userId } = auth();
-
+  //! return early if no user is authenticated
   if (!userId) {
     return;
   }
@@ -33,20 +34,29 @@ export const checkApiLimit = async () => {
     return false;
   }
 
+  //! find the user's current API limit record
+
   const userApiLimit = await prismadb.userApiLimit.findUnique({
     where: { userId: userId },
   });
 
   if (!userApiLimit || userApiLimit.count < MAX_FREE_COUNTS) {
+    //!if user exists , increment their api count by 1
     return true;
   } else {
+    //! If user does'nt exist create record with count 0
     return false;
   }
 };
 
+//! check if the user has exceeded their free api limit
+//! return true if user can make more requests, false
+
 export const getApiLimitCount = async () => {
+  //! get the current user ID from Clerk Authentication
   const { userId } = auth();
 
+  //! return false if no user is authenticated
   if (!userId) {
     return 0;
   }

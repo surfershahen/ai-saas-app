@@ -4,6 +4,7 @@ import { getApiLimitCount } from "@/lib/api-limit";
 import { checkSubscription } from "@/lib/subscription";
 
 const Navbar = async () => {
+  //!database is sleeping should change the api
   const apiLimitCount = await getApiLimitCount();
   const isPro = await checkSubscription();
   return (
